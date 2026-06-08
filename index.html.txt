@@ -1,2 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>의료 영상 분석 시스템 | 医疗影像分析系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Microsoft Yahei", sans-serif;
+        }
 
+        body {
+            background-color: #eef2f7;
+            padding: 50px 15px;
+        }
+
+        .main-wrap {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* 顶部标题区 */
+        .page-header {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.7;
+        }
+
+        /* 主体区域 上下分区布局（和参考页结构区分） */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 20px;
+            color: #334155;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title span {
+            font-size: 15px;
+            color: #94a3b8;
+            font-weight: normal;
+        }
+
+        /* 上传区域样式 */
+        .upload-container {
+            border: 3px dashed #c7d2fe;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-container:hover {
+            border-color: #6366f1;
+            background-color: #f8faff;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: #6366f1;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .upload-btn:hover {
+            background-color: #4f46e5;
+        }
+
+        .tip-text {
+            margin-top: 15px;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 图片预览 */
+        .img-box {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        #show-img {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 8px;
+            display: none;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* 结果展示区 */
+        .result-content {
+            min-height: 220px;
+            line-height: 2;
+            font-size: 15px;
+            color: #475569;
+        }
+
+        .result-kr {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .status-tag {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 8px 16px;
+            background-color: #dcfce7;
+            color: #16a34a;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+        /* 底部作者信息 */
+        .author-info {
+            margin-top: 35px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #cbd5e1;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            .page-header h1 {
+                font-size: 22px;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrap">
+        <!-- 顶部标题 -->
+        <div class="page-header">
+            <h1>의료 영상 지능 분석 시스템</h1>
+            <p>医疗影像智能分析系统</p>
+            <p>이미지 업로드 후 자동 골절 판독 | 上传图片自动完成骨折判读</p>
+        </div>
+
+        <!-- 主体内容 -->
+        <div class="content-area">
+            <!-- 上传模块 -->
+            <div class="card">
+                <div class="card-title">
+                    이미지 업로드 <span>| 图片上传</span>
+                </div>
+                <div class="upload-container" id="upload-area">
+                    <label for="file-input">
+                        <button class="upload-btn">파일 선택 / 选择文件</button>
+                    </label>
+                    <input type="file" id="file-input" accept="image/*">
+                    <div class="tip-text">
+                        지원 형식: JPG, PNG, GIF<br>
+                        支持格式：JPG、PNG、GIF
+                    </div>
+                </div>
+                <div class="img-box">
+                    <img id="show-img" alt="미리보기 / 图片预览">
+                </div>
+            </div>
+
+            <!-- 分析结果模块 -->
+            <div class="card">
+                <div class="card-title">
+                    분석 결과 <span>| 分析结果</span>
+                </div>
+                <div class="result-content" id="result-area">
+                    <p>영상을 업로드해 주세요. 시스템이 분석을 시작합니다.</p>
+                    <p class="result-kr">请上传影像文件，系统将启动智能分析。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部：姓名+学号 -->
+        <div class="author-info">
+            <p>작성자(作者)：전시옥 &nbsp;&nbsp; 학번(学号)：202217019</p>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const showImg = document.getElementById('show-img');
+        const resultArea = document.getElementById('result-area');
+
+        // 图片上传监听
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 图片预览
+            const reader = new FileReader();
+            reader.onload = function(res) {
+                showImg.src = res.target.result;
+                showImg.style.display = 'block';
+
+                // 加载中提示 中韩双语
+                resultArea.innerHTML = `
+                    <p>영상 데이터를 분석 중입니다. 잠시만 기다려 주세요...</p>
+                    <p class="result-kr">正在解析影像数据、提取特征，请稍候...</p>
+                `;
+
+                // 模拟分析延迟
+                setTimeout(() => {
+                    // 最终识别结果 双语对照
+                    resultArea.innerHTML = `
+                        <p>✅ 분석 완료 | 分析完成</p>
+                        <p>▪ 영상 종류: 골격 X선 영상</p>
+                        <p class="result-kr">▪ 影像类型：骨骼X光影像</p>
+
+                        <p>▪ 판독 결과: 횡행 골절이 확인됨</p>
+                        <p class="result-kr">▪ 判读结果：检出横行骨折</p>
+
+                        <p>▪ 특징 설명: 안정성 골절로 골절선이 수평으로 형성되며, 단면 전위 위험이 낮습니다.</p>
+                        <p class="result-kr">▪ 特征说明：属于稳定性骨折，骨折线呈水平走向，断端移位风险较低。</p>
+
+                        <span class="status-tag">정상 판독 / 识别有效</span>
+                    `;
+                }, 1500);
+            }
+            reader.readAsDataURL(file);
+        })
+    </script>
+</body>
+</html>
 
